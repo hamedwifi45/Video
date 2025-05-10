@@ -106,7 +106,8 @@ class VideoController extends Controller implements HasMiddleware
         }else{
             $userLike = 0;
         }
-        return view('videos.show-video' , compact('video', 'countlike', 'countDislike','userLike'));
+        $comments = $video->comments->sortByDesc('created_at');
+        return view('videos.show-video' , compact('video','comments', 'countlike', 'countDislike','userLike'));
     }
 
     /**

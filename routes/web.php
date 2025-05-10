@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VideoController;
@@ -21,3 +22,7 @@ Route::get('/dashboard', function () {
 Route::post('/view' , [VideoController::class , 'view'])->name('view');
 Route::resource('/videos', VideoController::class);
 Route::post('/like' , [LikeController::class , 'like'])->name('like');
+Route::post('/comment' , [CommentController::class , 'comment'])->name('comment');
+Route::get('/comment/edit/{comment}' , [CommentController::class , 'edit'])->name('comment.edit');
+Route::patch('/comment/{comment}' , [CommentController::class , 'update'])->name('comment.update');
+Route::delete('/comment/{comment}' , [CommentController::class , 'delete'])->name('comment.destroy');

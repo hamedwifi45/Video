@@ -3,11 +3,11 @@
 @section('content')
     <div class="container">
         <div class="row">
-            <div class="mx-auto col-10">
+            <div class="mx-auto col-9">
                 <div class="vidcontainer">
                     <input type="hidden" value="{{$video->id}}" id="videoId">
                     @foreach($video->convert as $videoc)
-                    <video id="videoPlayer" class="" style="{{$video->longi == '0' ? 'width: 85%; height: 90%;' : 'width:900px; height:510px'}}" controls>
+                    <video id="videoPlayer" class="" style="{{$video->longi == '0' ? 'width: 100%; height: 90%;' : 'width:900px; height:510px'}}" controls>
                         @if ($video->quality == 1080)
                             <source id="webm_source" src="{{Storage::url($videoc->webm_Format_1080)}}" type='video/webm'>
                             <source id="mp4_source" src="{{Storage::url($videoc->mp4_Format_1080)}}" type='video/mp4'>
@@ -23,7 +23,7 @@
                         @else
                             <source id="webm_source" src="{{Storage::url($videoc->webm_Format_240)}}" type='video/webm'>
                             <source id="mp4_source" src="{{Storage::url($videoc->mp4_Format_240)}}" type='video/mp4'>
-                                
+
                         @endif
                     </video>
                     @endforeach
@@ -41,7 +41,7 @@
                 @foreach ($video->views as $view)
                     <span class="float-right">عدد المشاهدات <span class="viewsNumber">{{$view->views_number}}</span></span>
                 @endforeach
-                <div class="interaction text-center mt-5">
+                <div class="interaction mt-5">
                     <a href="" class="like ml-3">
                         @if ($userLike)
                             @if ($userLike->like == 1)
@@ -54,9 +54,9 @@
                         <i class="far fa-thumbs-up fa-2x  "></i> <span id="likeNumber">{{$countlike}}</span>
 
                         @endif
-                        
+
                     </a>
-                    
+
                     <a href="" class="like mr-3">
                         @if ($userLike)
                             @if ($userLike->like == 0)
@@ -72,6 +72,102 @@
                     </a>
                     <div class="loginAlert mt-5">
 
+                    </div>
+                    <div class="mt-4 px-2">
+                        <div class="comments">
+                            <div class="mb-3">
+                                التعليقات
+                            </div>
+                            <div >
+                                <textarea name="comment" class="form-control" id="comment"></textarea>
+                                <button type="submit" class="btn btn-info mt-3 savedcomment">تعليق</button>
+
+                                <div class="CommentAlert mt-5">
+
+                                </div>
+
+
+                            </div>
+                            <div class="commentBody">
+                            @foreach ($comments as $comment)
+                                <div class="card mb-3 shadow-sm border-0">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex align-items-start">
+                                            <!-- صورة المستخدم مع تأثير ظل -->
+                                            <img src="{{ $comment->user->profile_photo_url }}" 
+                                                 class="rounded-circle me-3 shadow-sm"
+                                                 width="60"
+                                                 height="60"
+                                                 alt="صورة المستخدم"
+                                                 style="border: 2px solid #fff;">
+
+                                            <div class="flex-grow-1">
+                                                <!-- رأس التعليق -->
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <div class="d-flex align-items-center">
+                                                        <h6 class="mb-0 fw-bold text-primary">{{ $comment->user->name ?? 'مستخدم مجهول' }}</h6>
+                                                        <span class="ms-2 small text-muted">
+                                                            <i class="fas fa-clock me-1"></i>{{ $comment->created_at->diffForHumans() }}
+                                                        </span>
+                                                    </div>
+                                                    @if (Auth::check() && (Auth::user()->id == $comment->user_id || auth()->user()->admin_level > 0))
+
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+                                                                <i class="fas fa-ellipsis-h fs-5"></i>
+                                                            </button>
+
+                                                            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3" style="min-width: 200px;">
+                                                                <li>
+                                                                    <form action="{{-- route('comment.destroy', $comment->id) --}}" method="POST"
+                                                                        onsubmit="return confirm('هل أنت متأكد؟')">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <button type="submit"
+                                                                            class="dropdown-item d-flex align-items-center py-2 px-3 text-danger bg-danger-hover">
+                                                                            <i class="fas fa-trash-alt me-2"></i>
+                                                                            <span class="fw-medium">حذف التعليق</span>
+                                                                        </button>
+                                                                    </form>
+                                                                </li>
+                                                                <li>
+                                                                    <form action="{{-- route('comment.edit', $comment->id) --}}" method="GET">
+                                                                        @csrf
+                                                                        <button type="submit"
+                                                                            class="dropdown-item d-flex align-items-center py-2 px-3 text-primary bg-primary-hover">
+                                                                            <i class="fas fa-edit me-2"></i>
+                                                                            <span class="fw-medium">تعديل التعليق</span>
+                                                                        </button>
+                                                                    </form>
+                                                                </li>
+
+                                                            </ul>
+                                                        </div>
+                                                    @endif
+                                                </div>
+
+                                                <!-- محتوى التعليق -->
+                                                <p class="mb-2 text-dark" style="line-height: 1.6;">{{ $comment->body }}</p>
+
+                                                <!-- أزرار التفاعل -->
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <button class="btn btn-sm btn-link text-decoration-none text-secondary p-0">
+                                                        <i class="fas fa-heart me-1"></i> 12
+                                                    </button>
+                                                    <button class="btn btn-sm btn-link text-decoration-none text-secondary p-0">
+                                                        <i class="fas fa-reply me-1"></i> رد
+                                                    </button>
+                                                    <button class="btn btn-sm btn-link text-decoration-none text-secondary p-0">
+                                                        <i class="fas fa-share-nodes me-1"></i> مشاركة
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -193,6 +289,87 @@
                 success : function(data){
                     $(".viewsNumber").html(data.views);
                 }
+                
+                
+            });
+        });
+    </script>
+    <script>
+        $('.savedcomment').on('click' , function(e){
+            var token = '{{Session::token()}}';
+            var urlC = '{{route("comment")}}';
+            var ViedoId = 0;
+            var Authuser = '{{(Auth::user() ? 0 : 1)}}';
+
+            if (Authuser == '1'){
+                event.preventDefault();
+                var html = '<div class="alert alert-danger  ">\
+                            <ul>\
+                                <li>يجب عليك تسجيل الدخول لكتابة تعليق ولك اي شو هيدا</li>\
+                            </ul>\
+                            </div>';
+                $(".CommentAlert").html(html);
+            }
+            else if ($('#comment').val().length == 0){
+                event.preventDefault();
+                var html = '<div class="alert alert-danger  ">\
+                            <ul>\
+                                <li>الرجاء كتابة تعليق معلم</li>\
+                            </ul>\
+                            </div>';
+                $(".CommentAlert").html(html);
+            }
+            else{
+                $(".CommentAlert").html('');
+                // لكي لا يعاد المستخدم الى بداية الصفحة نستخدم
+                event.preventDefault();
+                videoId = $('#videoId').val();
+                body = $('#comment').val();
+            }
+
+            
+            $.ajax({
+                method:'POST',
+                url: urlC,
+                data:{
+                    comment : body,
+                    videoId : videoId,
+                    _token : token
+                },
+                success: function(data) {
+    $('#comment').val('');
+    
+    // استخدام template literals (بدلاً من concatenation بالـ \)
+    var html = `
+    <div class="card mb-3 shadow-sm border-0">
+        <div class="card-body p-3">
+            <div class="d-flex align-items-start">
+                <img src="${data.user.profile_photo_url || '/default-avatar.png'}" 
+                     class="rounded-circle me-3 shadow-sm" 
+                     width="60"
+                     height="60"
+                     alt="صورة المستخدم"
+                     style="border: 2px solid #fff;">
+
+                <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex align-items-center">
+                            <h6 class="mb-0 fw-bold text-primary">${data.user.name || 'مستخدم مجهول'}</h6>
+                            <span class="ms-2 small text-muted">
+                                <i class="fas fa-clock me-1"></i>الآن
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <p class="mb-2 p-2 border-primary-subtle bg-info" style="line-height: 1.6;">اعد تحميل الصفحة لاظهار خيار الحذف والتعديل</p>
+                    <p class="mb-2 text-dark" style="line-height: 1.6;">${data.body}</p>
+                </div>
+            </div>
+        </div>
+    </div>`;
+    
+    $('.commentBody').prepend(html); // تأكد من أن الكلاس مطابق (حساس لحالة الأحرف)
+}
                 
                 
             });
