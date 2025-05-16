@@ -41,21 +41,26 @@ class CommentController extends Controller implements HasMiddleware
         $commentId = $comment->id;
         return response()->json([
             'body' => $comment->body,
+            'id' => $comment->id,
             'user' => [
+                'id' => $comment->user->id,
                 'name' => $comment->user->name,
                 'profile_photo_url' => $comment->user->profile_photo_url
             ]
         ]);
         }
-    public function edit(Comment $comment){
-        return view('comment.edit');
+    public function edit($id){
+        $comment = Comment::where('id' , $id)->first();
+        return view('edit.comment' , compact('comment'));
     }
     public function destroy(Comment $comment){
-        dd($comment);
+        // dd($comment);
         $comment->delete();
-        return back();
+        return back()->with('success' , "تم العملية بنجاح وحذف التعليق");
     }
-    public function update(Comment $comment){
-        
-    }
+    public function update(Comment $comment , Request $request){
+    $comment->body = $request->body;
+    $comment->save();
+    return redirect()->route('videosp.show' , $comment->video_id)->with('success','تمت العملية بنجاح وعدل تعليق');
+}
 }

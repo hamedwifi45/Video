@@ -65,6 +65,40 @@
             transition: opacity 0.3s ease;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
+        /* تنسيق حقل البحث */
+.form-inline .form-control {
+    border-radius: 50px;
+    padding: 0.5rem 1rem;
+    border: 2px solid #E0E0E0;
+    background-color: var(--card-bg);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    width: 100%;
+    max-width: 400px;
+}
+
+.form-inline .form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 8px rgba(108, 99, 255, 0.3);
+}
+
+.btn-secondary {
+    background-color: var(--secondary);
+    border: none;
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 50px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: darken(var(--secondary), 10%);
+    transform: scale(1.05);
+}
 
         .card-icons:hover .play-button {
             opacity: 1;
@@ -99,10 +133,36 @@
                 font-size: 1.8rem;
             }
         }
+        /* تحسين شكل البحث */
+.form-control.me-2 {
+    border-radius: 50px;
+    padding: 0.5rem 1rem;
+    border: 2px solid #E0E0E0;
+    background-color: var(--card-bg);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.form-control.me-2:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 8px rgba(108, 99, 255, 0.3);
+}
     </style>
 @endsection
 
 @section('content')
+        <div class="row justify-content-center mb-4">
+    <div class="col-md-6">
+        <form class="d-flex justify-content-center" action="{{ route('video.search') }}" method="GET">
+            <input type="text" class="form-control me-2 flex-grow-1" name="title" placeholder="ابحث عن فيديو...">
+            <button type="submit" class="btn btn-gradient flex-shrink-0">ابحث</button>
+        </form>
+    </div>
+</div>
+        <hr>
+        <br>
     <!-- قسم العنوان مع تأثير الـ Hero -->
     <div class="container mx-auto px-4 py-8">
         <div class="hero text-center">
@@ -114,7 +174,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             @forelse ($videos as $video)
                 @if ($video->processed)
-                    <div class="video-card">
+                    <div class="video-card m-2">
                         <div class="card-icons relative">
                             <a href="/videos/{{ $video->id }}" class="block relative">
                                 <img src="{{ Storage::url($video->image_path) }}" 

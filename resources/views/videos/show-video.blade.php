@@ -1,4 +1,133 @@
 @extends('layouts.main')
+@section('style')
+<style>
+    /* ألوان رئيسية */
+    :root {
+        --primary: #6C63FF; /* أزرق بنفسجي */
+        --secondary: #FF9F43; /* برتقالي فاتح */
+        --accent: #FF6B6B; /* أحمر مخملي */
+        --bg: #F8F9FA;
+        --card-bg: rgba(255, 255, 255, 0.95);
+    }
+
+    .container-video {
+        background-color: var(--bg);
+        padding: 2rem;
+        border-radius: 1rem;
+    }
+
+    .vidcontainer {
+        position: relative;
+        max-width: 900px;
+        margin: auto;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    video {
+        width: 100%;
+        height: auto;
+        display: block;
+        background-color: #000;
+        border-radius: 1rem;
+    }
+
+    select#qualityPick {
+        margin-top: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        border: 1px solid #ddd;
+        background-color: white;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    select#qualityPick:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 8px rgba(108, 99, 255, 0.3);
+    }
+
+    .title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #333;
+        margin: 1rem 0;
+    }
+
+    .interaction {
+        background-color: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border-radius: 1rem;
+        padding: 1rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .like i {
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+
+    .like i:hover {
+        transform: scale(1.1);
+    }
+
+    .liked i {
+        color: var(--accent);
+    }
+
+    .comments {
+        margin-top: 2rem;
+    }
+
+    .commentBody .card {
+        background-color: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border-radius: 1rem;
+        transition: transform 0.3s ease;
+    }
+
+    .commentBody .card:hover {
+        transform: translateY(-5px);
+    }
+
+    textarea#comment {
+        resize: none;
+        border-radius: 1rem;
+        padding: 1rem;
+        border: 1px solid #ddd;
+        background-color: #fff;
+        transition: all 0.3s ease;
+    }
+
+    textarea#comment:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 8px rgba(108, 99, 255, 0.3);
+    }
+
+    .savedcomment {
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .savedcomment:hover {
+        transform: scale(1.05);
+    }
+
+    @media (max-width: 768px) {
+        .title {
+            font-size: 1.2rem;
+        }
+    }
+</style>
+@endsection
 
 @section('content')
     <div class="container">
@@ -41,6 +170,54 @@
                 @foreach ($video->views as $view)
                     <span class="float-right">عدد المشاهدات <span class="viewsNumber">{{$view->views_number}}</span></span>
                 @endforeach
+                    <div id="carouselId" class="carousel slide"  data-bs-ride="carousel">
+    <ol class="carousel-indicators">
+        @foreach ($videos as $i => $video)
+        <li
+            data-bs-target="#carouselId"
+            data-bs-slide-to="{{ $i }}"
+            class="{{ $i === 0 ? 'active' : '' }}"
+            aria-label="{{ $video->name }}"
+        ></li>
+        @endforeach
+    </ol>
+    <div class="carousel-inner" role="listbox">
+        @foreach ($videos as $i => $video)
+        <div class="carousel-item {{ $i === 0 ? 'active' : '' }}">
+            <a href="{{ route('view' , $video->id) }}" class="d-block text-decoration-none">
+                <img
+                    src="{{ Storage::url($video->image_path) }}"
+                    class="w-100 d-block"
+                    alt="{{ $video->title }}"
+                />
+                <div class="carousel-caption mb-3 d-none d-md-block bg-dark bg-opacity-75 rounded p-2">
+                    <h5>{{ $video->title }}</h5>
+                </div>
+            </a>
+        </div>
+        @endforeach
+    </div>
+    <button
+        class="carousel-control-prev"
+        type="button"
+        data-bs-target="#carouselId"
+        data-bs-slide="prev"
+    >
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">سابق</span>
+    </button>
+    <button
+        class="carousel-control-next"
+        type="button"
+        data-bs-target="#carouselId"
+        data-bs-slide="next"
+    >
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">التالي</span>
+    </button>
+                    </div>
+                    
+                    
                 <div class="interaction mt-5">
                     <a href="" class="like ml-3">
                         @if ($userLike)
@@ -70,6 +247,7 @@
 
                         @endif
                     </a>
+                    
                     <div class="loginAlert mt-5">
 
                     </div>
@@ -89,6 +267,7 @@
 
                             </div>
                             <div class="commentBody">
+                                
                             @foreach ($comments as $comment)
                                 <div class="card mb-3 shadow-sm border-0">
                                     <div class="card-body p-3">
@@ -119,7 +298,7 @@
 
                                                             <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3" style="min-width: 200px;">
                                                                 <li>
-                                                                    <form action="{{-- route('comment.destroy', $comment->id) --}}" method="POST"
+                                                                    <form action="{{ route('comment.destroy', $comment->id) }}" method="POST"
                                                                         onsubmit="return confirm('هل أنت متأكد؟')">
                                                                         @csrf
                                                                         @method('DELETE')
@@ -131,7 +310,7 @@
                                                                     </form>
                                                                 </li>
                                                                 <li>
-                                                                    <form action="{{-- route('comment.edit', $comment->id) --}}" method="GET">
+                                                                    <form action="{{ route('comment.edit', $comment->id) }}" method="GET">
                                                                         @csrf
                                                                         <button type="submit"
                                                                             class="dropdown-item d-flex align-items-center py-2 px-3 text-primary bg-primary-hover">

@@ -97,17 +97,30 @@ class VideoController extends Controller implements HasMiddleware
      * Display the specified resource.
      */
     public function show(Video $video)
-    {
+    {   
+            $videos = Video::where('user_id' , $video->user_id)->take(4)->get();
+        $videosCount = Video::where('id' , $video->user_id)->count();
+        if($videosCount > 4){
+            $videos = Video::where('user_id' , $video->user_id)->take(4)->get();
+            $videosAll = Video::take(10 - $videosCount)->get();
+            $videos = $videos->merge($videosAll)->shuffle();
+        }else{
+            $videos = Video::where('user_id' , $video->user_id)->take($videosCount)->get();
+            $videosAll = Video::take(10 - $videosCount)->get();
+            $videos = $videos->merge($videosAll)->shuffle();
+        }
+
         $countlike = Like::where('video_id' , $video->id)->where('Like' , 1)->count();
         $countDislike = Like::where('video_id' , $video->id)->where('Like' , 0)->count();
         $user = Auth::user();
         if(Auth::check()){
+            auth()->user()->VideoInHistory()->attach($video->id);
             $userLike = $user->likes()->where('video_id' , $video->id)->first();
         }else{
             $userLike = 0;
         }
         $comments = $video->comments->sortByDesc('created_at');
-        return view('videos.show-video' , compact('video','comments', 'countlike', 'countDislike','userLike'));
+        return view('videos.show-video' , compact('video','videos','comments', 'countlike', 'countDislike','userLike'));
     }
 
     /**
@@ -179,5 +192,11 @@ class VideoController extends Controller implements HasMiddleware
         $view->increment('views_number');
         $viewsnum = $view->views_number;
         return response()->json(['views' => $viewsnum]);
+    }
+    public function serch(Request $request){
+        $videos = auth()->user()->videos()->where('title' , 'like' ,'%'. $request->title . '%')->get()->sortByDesc('created_at');
+        $title = 'اخر الفيديوهات المرفوعة';
+        return view('videos.my-videos' , compact('videos' , 'title'));
+    
     }
 }

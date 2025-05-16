@@ -11,20 +11,71 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-    @vite(entrypoints: ['resources/css/app.css', 'resources/js/app.js'])
+    @vite( ['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
     {{-- </bootstrap> --}}
     <title>{{env('APP_NAME')}}</title>
     
     <link rel="stylesheet" href="{{asset('build/assets/style.css')}}">
     @yield('style')
+    <style>
+    /* ألوان رئيسية */
+    :root {
+        --primary: #6C63FF; /* أزرق بنفسجي */
+        --secondary: #FF9F43; /* برتقالي فاتح */
+        --accent: #FF6B6B; /* أحمر مخملي */
+        --bg: #F8F9FA;
+        --card-bg: rgba(255, 255, 255, 0.95);
+    }
+
+    .navbar-nav .nav-link {
+        position: relative;
+        transition: color 0.3s ease;
+        font-weight: 500;
+    }
+
+    .navbar-nav .nav-link i {
+        margin-right: 8px;
+        transition: transform 0.3s ease;
+    }
+
+    /* تأثير عند التمرير على العناصر */
+    .navbar-nav .nav-item:hover .nav-link {
+        color: var(--primary);
+    }
+
+    .navbar-nav .nav-item:hover .nav-link i {
+        transform: translateX(4px);
+    }
+
+    /* تنسيق العنصر النشط */
+    .navbar-nav .nav-item.active .nav-link,
+    .navbar-nav .nav-item.active .nav-link i {
+        color: var(--primary);
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    /* خط سفلي جذاب للعنصر النشط */
+    .navbar-nav .nav-item.active .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        border-radius: 2px;
+    }
+</style>
 </head>
 <body dir="rtl" style="text-align :right">
+    
     <nav
         class="navbar navbar-expand-md navbar-light bg-light"
     >
         <div class="container">
-            <a class="navbar-brand bg-indigo-700" href="#">footube</a>
+            <a class="navbar-brand bg-indigo-700" href="{{ route('main') }}">footube</a>
             <button
                 class="navbar-toggler d-lg-none"
                 type="button"
@@ -38,20 +89,22 @@
             </button>
             <div class="collapse navbar-collapse" id="collapsibleNavId">
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{-- route('main') --}}"><i class="fa fa-home"></i> الرئيسية</a>
+                    <li class="nav-item {{ request()->is('/')? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('main') }}"><i class="fa fa-home"></i> الرئيسية</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{-- route('main') --}}"><i class="fa fa-history"></i> السجل</a>
+                    @auth
+                    <li class="nav-item {{ request()->is('history')? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('History') }}"><i class="fa fa-history"></i> السجل</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('videos.create') }}"><i class="fa fa-upload"></i> رفع فيديو</a>
+                    <li class="nav-item {{ request()->is('videos/create*')? 'active' : '' }}">
+                        <a class="nav-link " href="{{ route('videos.create') }}"><i class="fa fa-upload"></i> رفع فيديو</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item {{ request()->is('videos')? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('videos.index') }}"><i class="fa fa-film"></i> فيديوهاتي</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{-- route('main') --}}"><i class="fa fa-tv"></i> قنوات</a>
+                    @endauth
+                    <li class="nav-item {{ request()->is('channel*')? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('channel.index') }}"><i class="fa fa-tv"></i> قنوات</a>
                     </li>
                 </ul>
 
