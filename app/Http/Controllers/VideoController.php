@@ -82,7 +82,7 @@ class VideoController extends Controller implements HasMiddleware
         'image_path' => $imagepath,
         'user_id' => auth()->id(),
     ]);
-
+    
     $view = Views::create([
         'video_id' => $video->id,
         'user_id' => auth()->id(),

@@ -7,8 +7,10 @@
                 <div class="card-header text-center">
                     رفع فيديو
                 </div>
-                @if (!auth()->user()->block)
+                @if ( auth()->user()->Block >= 1)
+
                     <div class="alert alert-danger">
+                        
                         لايمكنك انشاء فيديوهات فأت محظور لاتتواصل مع الادارة فنحن ليس لدينا ارقام
                     </div>
                 @else

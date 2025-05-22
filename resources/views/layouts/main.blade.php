@@ -9,12 +9,16 @@
     {{-- <bootstrap> --}}
     <script src="https://kit.fontawesome.com/3d7900bfe9.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    
+    <!-- Pusher -->
+     <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
     @vite( ['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
     {{-- </bootstrap> --}}
     <title>{{env('APP_NAME')}}</title>
+
+    <link href="{!! asset('theme/css/sb-admin-2.min.css') !!}" rel="stylesheet">
     
     <link rel="stylesheet" href="{{asset('build/assets/style.css')}}">
     @yield('style')
@@ -107,9 +111,36 @@
                         <a class="nav-link" href="{{ route('channel.index') }}"><i class="fa fa-tv"></i> قنوات</a>
                     </li>
                 </ul>
+                
+                
+                <ul class="navbar-nav mr-auto ">
+                    <div  class="topbar">
+                        @auth
+                        
+                        <li class="nav-item dropdown no-arrow alert-dropdown mx-1">
+                            
+                                <a class="nav-link dropdown-bs-toggle" href="#" id="alertsDropdown" role="button"
+                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-bell fa-fw fa-lg"></i>
+                                    <!-- Counter - Alerts -->
+                                    <span class="badge badge-danger badge-counter notif-count" data-count="0">0</span>
+                                </a>
+                                <!-- Dropdown - Alerts -->
+                                <div class="dropdown-list dropdown-menu dropdown-menu-right text-right mt-2 shadow animated--grow-in"
+                                    aria-labelledby="alertsDropdown">
+                                    <h6 class="dropdown-header text-lg font-bold">
+                                        مركز الأشعارات
+                                    </h6>
+                                    
+                                    
+                                    <div class="alert-body">
 
-
-                <ul class="navbar-nav mx-auto ">
+                                    </div>
+                                    <a class="dropdown-item text-center small text-gray-500" href="#">عرض جميع الاشعارات</a>
+                                </div>
+                            </li>
+                        @endauth
+                    </div>
                     @guest
                         <li class="nav-item mt-2">
                             <a href="{{route('login')}}" class="nav-link">{{__('Login')}}</a>
@@ -222,6 +253,20 @@
         @yield('content')
     </main>
    
+
+
+    <script>
+
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+    var pusher = new Pusher('78b2d2bbdc7625b1a1cf', {
+      cluster: 'ap2'
+    });
+
+    
+  </script>
+  <script src="{{ asset('build/assets/pushNotifi.js') }}"></script>
     @yield('scripts')
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 
